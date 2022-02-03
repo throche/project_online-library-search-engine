@@ -32,22 +32,20 @@ pnds.5791@gmail.com
 
 # Table of content
 
-+ Context
 + Installation
 + Use cases (features)
-+ Quick exemple of usage
-+ program architecture
-+ data structure
-+ credits and references
++ Exemple of usage
++ Program architecture
++ Data structure
++ Credits and references
 
 
-# Context
 # Installation
 # Use cases (features)
-# Quick exemple of usage
-# program architecture
-# data structure
-# credits and references
+# Exemple of usage
+# Program architecture
+# Data structure
+# Credits and references
 
 
 code : ```...```

@@ -1,0 +1,6 @@
+download more books
+wget -w 2 -m http://www.gutenberg.org/robot/harvest?filetypes[]=txt&langs[]=en
+
+
+Extract all files into ./data/
+find . -name "*.zip" | while read filename; do unzip -o -d "./data/" "$filename"; done;
