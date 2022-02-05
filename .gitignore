@@ -1,3 +1,6 @@
+# offline books is too bulky
+project/data/books_offline/*.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
