@@ -12,8 +12,9 @@ import glob
 
 # --- GLOBAL VARIABLES ----- #
 
-# PATH_FOLDER_BOOKS = "data/books_offline/"
-PATH_FOLDER_BOOKS = "data/books_online/"
+DEBUG=True
+PATH_FOLDER_BOOKS = "data/books_offline/"
+# PATH_FOLDER_BOOKS = "data/books_online/"
 PATH_FILE_METADATA = "data/meta/books_meta_data.csv"
 
 
@@ -27,23 +28,43 @@ class Extractor:
         extract meta data for every books into a single file books_meta_data.csv
         each line is : id;title;author;...
         """
+        book_id = ""
+        title = ""
+        author = ""
+        date = ""
         try:
             file_meta = open(PATH_FILE_METADATA, "w")
-            
             files_of_books = [file for file in glob.glob(PATH_FOLDER_BOOKS+"*.txt")]
+            files_of_books.sort()
+
+            # for every books:
             for file_book in files_of_books:
-                book = open(file_book, 'r')
-                for line in book.readlines(1):
-                    print(line)
-                #         linestart = line.read(size=5)
-                #         if linestart == "Title":
-                #             title = line.lstrip("Title: ")
-                #         if linestart == "Autho":
-                #             author = line.lstrip("Author: ")
-                #         if linestart == "Relea":
-                #             date = line.lstrip("Release Date: ")
-                # print(title + " " + author + " " + date)
+                book = open(file_book, 'r', encoding='ascii')
+                if DEBUG:
+                    print("opening: "+file_book)
+                book_id = file_book[19:24]
+                
+                # default values
+                title = "unknown"
+                author = "unknown"
+                date = "unknown"
+                
+                # extract meta data 
+                lines = book.readlines(750)
+                for line in lines:
+                    linestart = line[0:6]
+                    if (linestart == "Title:"):
+                        title = line[7:-1]
+                    if (linestart == "Author"):
+                        author = line[8:-1]
+                    if (linestart == "Releas"):
+                        date = line[14:-16]
+                        break
+                if DEBUG:
+                    print(book_id+";"+title+";"+author+";"+date+"\n")
+                file_meta.write(book_id+";"+title+";"+author+";"+date+"\n")
                 book.close()
+
             file_meta.close()
         except IOError as e:
             print(e)

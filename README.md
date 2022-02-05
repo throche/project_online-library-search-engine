@@ -44,10 +44,11 @@ pnds.5791@gmail.com
 
 ## Back-end API in python (using fastapi package)
 
-pip install -r requirements.txt 
+`pip install fastapi`
 
-sudo apt install uvicorn
+`pip install uvicorn`
 
+`pip install -r requirements.txt `
 
 ## Front-end Client in Angular Typescript
 
@@ -71,12 +72,11 @@ sudo npm install -g @angular/cli
 
 from the project/src/server folder
 
-uvicorn main:app --reload
+`uvicorn main:app --reload`
 
+or, from the project folder
 
-from the project folder
-
-uvicorn src.server.main:app --reload
+`uvicorn src.server.main:app --reload`
 
 ## Front-end Client in Angular Typescript
 
