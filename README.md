@@ -74,3 +74,8 @@ each line is : `a_word;nb_occurences` (alpha ascended sort on first field)
 6) use python script to make a global index for all unique words into a single file `project/data/index/global/index_global_unique_word_to_id.csv`
 
 each line is : `a_word;#+nb_occurences;#+nb_occurences;...` (alpha ascended sort on first field, where # is a book id)
+
+7) fonction to search a word in the indexes (@param : string, @return : (id, scores)[])
+
+8) fonction to split a string containing several words with spaces into an array of words(@param : string, @return: string[])
+
