@@ -123,7 +123,7 @@ class Extractor:
         common words are filtered out
         """
         try:
-            book_id = path_book[19:23]
+            book_id = path_book[19:24]
             if DEBUG:
                 print(book_id)
                 print(PATH_FOLDER_INDEX_UNIQUE_WORD+"index_unique_word_"+book_id+".csv")
@@ -132,8 +132,7 @@ class Extractor:
             index = open(PATH_FOLDER_INDEX_UNIQUE_WORD+"index_unique_word_"+book_id+".csv", "w")
 
             # open the book
-            # book = open(path_book, 'r', encoding='ASCII')
-            book = open(path_book, 'r', errors="ignore")#.read().decode('ascii', errors='ignore')
+            book = open(path_book, 'r', encoding='ASCII', errors="ignore")#.read().decode('ascii', errors='ignore')
             if DEBUG:
                 print("opening: "+path_book)
             
