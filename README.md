@@ -115,7 +115,7 @@ Open a terminal in `project/src/client` then enter :
 ## server side (online)
 
 + we use a score system to rank our search results and suggestions
-+ the search results and suggestions are obtained very quickly (<1s)
++ the search results and suggestions are obtained very quickly (< 1sec)
 
 ## back end (offline)
 
@@ -144,12 +144,23 @@ The book_id is used to generate a link to the proper book section in the Guntenb
 
 ## server side (online)
 
-When the server is booted, it will load three files in Python dictionnarys then it won't read any other files. The loaded files are :
+When the server is booted, it will load three files in Python dictionnaries then it won't read any other files. The loaded files are :
 
 + `books_meta_data.csv` which contains meta-data for all books
 + `index_global_unique_word_to_id.csv` which contains all unique words and book_ids which have them
 + `books_distance.csv` which contains suggestions for every books
 
+From `project/src/server/main.py` :
+
+The server side uses a Rest API structure using the fastapi python package.
+
+The function `read_item(q: str)` are the endpoint to access for the search function and the suggestion function.
+
+They access the 3 indexes made during the offline pre-treatment operations. 
+
+The indexes are loaded into dictionnaries, implemented using hashmaps.
+
+When several words are searched, the query string is broken into single words and only books containing all words will be returned as results.
 
 # Offline work & scripts
 
@@ -207,14 +218,55 @@ we use `Extractor.global_index_unique_word()` to generate a single global index 
 
 it generates the file : `project/data/index/global/index_global_unique_word_to_id.csv`
 
-each line is : `word;book_id1;nb_occurences;book_id2;nb_occurences;...;` where word is sorted and unique, there can be one or more `book_id;nb_occurences;` following a word per line
+each line is : `word;book_id1;nb_occurences;book_id2;nb_occurences;...;` where word is sorted and unique, there can be one or more `book_id;nb_occurences;` following a word per line.
 
-# Data structure
 
+## comparing book indexes and generating neighbours for suggestions
+
+### graph of neighbours
+
+From `project/src/main_distance_books.py` :
+
+we use `create_distance_index()` to generate an index file which contains for each book index the list of indexes of neighbours based on a closeness calculation algorithm.
+
+it generates the file : `project/data/distance/books_distance.csv`
+
+each line is : `id;id_neighbour_1;id_neighbour_2;id_neighbour_3;...;` where id is sorted and unique.
+
+
+### calculate closeness between 2 books
+
+From `project/src/main_distance_books.py` :
+
+we use `compare_unique_indexes(idx1, idx2)` to compare 2 books indexes file which contains for each book index all unique words. If the 2 books are similar, we define them as neighbours for the suggestion feature. It uses for each word a calculated score based on the rarity of the word.
+
+
+### calculate words scores
+
+From `project/src/main_distance_books.py` :
+
+we use `create_word_scores()` to define for each word appearing in all the books of the database, a score based on its rarity. A word with a higher score means that the word appears in less books than a word with a lower score.
+
+it generates the file : `project/data/distance/words_scores.csv`
+
+each line is : `word;score;` where word is sorted and unique, and score a float representing the word's rarity in the book database.
 
 
 # Suggestions : graph algorithms
 
+The algorithm for determining if 2 books are related or not is based on the calculation of a Jaccard distance with a closeness score using the unique index of each book. 
+
+The unique index of a book lists every word and its number of occurences. 
+
+Our first approach for determining if 2 books were related was to count the number of different words they had in common. 2 books on the same topic should have a lot of words in common. 
+
+After trying this implementation, we decided to improve our algorithm by attributing different weight to the different words in common that 2 books had. If 2 books have a specific word in common, they have a much higher chance to be related (for example 2 books with the word 'algorithm') than 2 books with a very common word (for example 2 books with the word 'england'). This implementation was inspired from the Term Frequency-Inverse Document Frequency ranking method (TF-IDF). 
+
+We calculated a rarity score for each word based on the number of books in which the word could be found, among all the books in our database. The calculated score is higher for words that are present in fewer books.
+
+When comparing 2 book indexes, if a word is present in both books, the closeness score is increased by the amount of the rarity score of the found word. If the total closeness score is higher than a threshold, we consider the 2 books as neighbours for suggestions.
+
+We decided for each book to keep the 50 highest 'closeness scores' in the file books_distance.csv
 
 # Credits
 
@@ -223,12 +275,4 @@ each line is : `word;book_id1;nb_occurences;book_id2;nb_occurences;...;` where w
 code : ```...```
 image : ![schema](/schema/schema1.png)
 
-
-
-# scrap book:
-
-
-7) fonction to search a word in the indexes (@param : string, @return : (id, scores)[])
-
-8) fonction to split a string containing several words with spaces into an array of words(@param : string, @return: string[])
 
