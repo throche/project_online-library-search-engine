@@ -25,7 +25,15 @@
   h6 {
     margin: 8px 0;
   }
+  
+  .row {
+  display: flex;
+  } 
 
+  .column {
+    flex: 50%;
+  }
+  
   p {
     margin: 0;
   }
@@ -355,24 +363,43 @@
 <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>    
     
 -->
-<div class="card-container">
-  <h1>{{ title }}</h1>
-</div>
-<div class="card-container">
-  <input type="text" [(ngModel)]="searchString">
-  <button type="submit" (click)="search()">
-    <span>Search</span>
-  </button>
-</div>
-
-  <div class="card-container" *ngFor="let e of ids; let i = index">
+<div class="row">
+  <div class="column">
+    <div class="card-container">
+      <h1>{{ title }}</h1>
+    </div>
+    <div class="card-container">
+      <input type="text" [(ngModel)]="searchString">
+      <button type="submit" (click)="search()">
+        <span>Search</span>
+      </button>
+    </div>
+    <div class="card-container" *ngFor="let e of ids; let i = index">
+      <a class="card" target="_blank" rel="noopener" href="https://www.gutenberg.org/ebooks/{{e}}">
+        <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>  
+        <span>{{titles[i]}}, {{authors[i]}}, {{dates[i]}} ({{scores[i]}})</span>
+      </a>
+      <button type="submit" (click)="suggest(e)">
+        <span>Suggest more</span>
+      </button>
     
-    <a class="card" target="_blank" rel="noopener" href="https://www.gutenberg.org/ebooks/{{e}}">
-      <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-
-      <span>{{titles[i]}}, {{authors[i]}}, {{dates[i]}} ({{scores[i]}})</span>
-    </a>
+    </div>   
   </div>
+  <div class="column">
+    <div class="card-container">
+      <h1>Suggestions</h1>
+    </div>
+    <div *ngIf="noSuggestion == true"> 
+      <span>Aucune suggestion</span>
+    </div>
+    <div class="card-container" *ngFor="let e of suggestionsIds; let i = index">
+      <a class="card" target="_blank" rel="noopener" href="https://www.gutenberg.org/ebooks/{{e}}">
+        <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>  
+        <span>{{suggestionsTitles[i]}}, {{suggestionsAuthors[i]}}, {{suggestionsDates[i]}}</span>
+      </a>
+    </div>   
+  </div>
+</div> 
 <!-- 
   <form (submit)="onSubmit()">
     <input [(ngModel)]="playerName">

@@ -2,18 +2,21 @@ from typing import Optional
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+import random
 
 # --- GLOBAL VARIABLES ----- #
 
 DEBUG=False
-# PATH_FOLDER_BOOKS = "data/books_offline/"
-# PATH_FOLDER_BOOKS = "data/books_online/"
+
 PATH_FILE_METADATA = "data/meta/books_meta_data.csv"
 # PATH_FILE_GLOBAL_INDEX = "data/index/global/index_global_unique_word_to_id_test.csv"
 PATH_FILE_GLOBAL_INDEX = "data/index/global/index_global_unique_word_to_id.csv"
+PATH_FILE_DISTANCE = "data/distance/books_distance.csv"
+
 GLOBAL_INDEX = dict()
 META_DATA = dict()
+DISTANCE = dict()
+NB_SUGGESTIONS = 5
 
 # --- REST API ----- #
 
@@ -38,7 +41,6 @@ def read_item(q: str):
 
     words = q.split(" ")
     lists = []
-    print(words)
     for word in words: 
         l = search_word_in_global_index(word)
         lists.append(l)
@@ -51,6 +53,20 @@ def read_item(q: str):
     #	           {"id": "10010", "Title" : "The Eulogies of Howard", "Author": "William Hayley", "Release_Date":"November 7, 2003", "score": "15"},
     #	           {"id": "10024", "Title" : "Beneath the Banner", "Author": "F. J. Cross", "Release_Date":"November 9, 2003", "score": "190"}]}
 
+
+@app.get("/suggest")
+def read_item(q: str):
+
+    if DISTANCE.get(q) == None:
+        return get_neighbours_metadata([])
+        
+    list_neighbours = DISTANCE[q]
+    suggestions = []
+    for i in range (NB_SUGGESTIONS):
+        suggestions.append(random.choice(list_neighbours))
+    
+    suggestions_with_metadata = get_neighbours_metadata(suggestions)    
+    return suggestions_with_metadata
 
 # --- INDEX LOAD FUNCTIONS ----- #
 
@@ -88,8 +104,7 @@ def load_meta_data():
         file_meta_data = open(PATH_FILE_METADATA, "r")
         lines = file_meta_data.readlines()
         for line in lines:
-            tab = line.split(";")[0:]
-            
+            tab = line.split(";")[0:-1]
             tab[-1] = tab[-1].rstrip()
             META_DATA[tab[0]]= tab[1:]
             if DEBUG:
@@ -99,6 +114,27 @@ def load_meta_data():
             print(META_DATA)
     except IOError as e:
         print(e)
+
+def load_neighbours():
+    """loads in memory the neighbours list into a dictionnary (python hashmap) 
+    with each book id being a key
+    and values being a list of book ids that are neighbours for suggestions"""    
+    try:
+        if DEBUG:
+            print("opening neighbours")
+        file_neighbours = open(PATH_FILE_DISTANCE, "r")
+        lines = file_neighbours.readlines()
+        for line in lines:
+            tab = line.split(";")[0:-1]            
+            DISTANCE[tab[0]]= tab[1:]
+            if DEBUG:
+                print(tab)
+        if DEBUG:
+            print("neighbours : ")
+            print(META_DATA)
+    except IOError as e:
+        print(e)
+
 
 # --- INDEX SEARCH FUNCTIONS ----- #
 
@@ -116,6 +152,17 @@ def get_results_metadata(results):
     for r in results: 
         metadata = META_DATA[r[0]]
         jsons["res"].append(write_json(r[0], metadata[0], metadata[1], metadata[2], r[1]))
+        if DEBUG:
+            print(metadata)
+            print(jsons)
+    return jsons
+
+
+def get_neighbours_metadata(results):  
+    jsons = {"res":[]}
+    for r in results: 
+        metadata = META_DATA[r]
+        jsons["res"].append(write_json_neighbours(r, metadata[0], metadata[1], metadata[2]))
         if DEBUG:
             print(metadata)
             print(jsons)
@@ -157,5 +204,14 @@ def write_json(id, title, author, date, score):
         print(json)
     return json
 
+def write_json_neighbours(id, title, author, date):
+    """return for each suggestion the json item to send to the client server"""
+    json = {"id": id, "Title" : title, "Author": author, "Release_Date":date}
+    if DEBUG:
+        print(json)
+    return json
+
+
 load_global_index()
 load_meta_data()
+load_neighbours()

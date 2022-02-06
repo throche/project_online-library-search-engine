@@ -17,8 +17,11 @@ export class AppComponent {
   public authors: string[];
   public dates: string[];
   public scores: string[];
-  //public searchForm: FormGroup;
-  
+  public suggestionsIds: string[];
+  public suggestionsTitles: string[];
+  public suggestionsAuthors: string[];
+  public suggestionsDates: string[];
+  public noSuggestion: boolean;
   constructor(private http: HttpClient ) 
   {
     this.searchString = ""
@@ -27,7 +30,13 @@ export class AppComponent {
     this.authors = []
     this.dates = []
     this.scores = []
-
+    
+    this.suggestionsIds = []
+    this.suggestionsTitles = []
+    this.suggestionsAuthors = []
+    this.suggestionsDates = []
+    this.noSuggestion = false
+    
   }
 
   search(){    
@@ -44,7 +53,7 @@ export class AppComponent {
         this.authors = []
         this.dates = []
         this.scores = []
-
+        
         let results = data.res
         
         var sortedResults = results.sort((obj1:any, obj2:any) => {
@@ -61,6 +70,40 @@ export class AppComponent {
           this.authors.push(entry.Author)
           this.dates.push(entry.Release_Date)
           this.scores.push(entry.score)
+        }
+      },
+      error: error => {
+        console.error('There was an error!', error);
+      }
+    })
+  }
+
+  suggest(id:any){    
+    const httpOptions = {
+      headers: new HttpHeaders({ 
+        'Access-Control-Allow-Origin':'*'
+      })
+    };
+    
+    var res = this.http.get<any>('http://127.0.0.1:8000/suggest?q='+id, httpOptions).subscribe({
+      next: data => {
+        this.suggestionsIds = []
+        this.suggestionsTitles = []
+        this.suggestionsAuthors = []
+        this.suggestionsDates = []
+        this.noSuggestion = false
+         
+        let results = data.res
+        if (results.length == 0){
+          this.noSuggestion = true
+        }
+        else{
+          for (let entry of results) {
+            this.suggestionsIds.push(entry.id)
+            this.suggestionsTitles.push(entry.Title)
+            this.suggestionsAuthors.push(entry.Author)
+            this.suggestionsDates.push(entry.Release_Date)
+          }  
         }
       },
       error: error => {
