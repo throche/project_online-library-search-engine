@@ -12,6 +12,7 @@ import glob
 
 # --- GLOBAL VARIABLES ----- #
 
+# DEBUG=True
 DEBUG=False
 
 PATH_FOLDER_BOOKS = "data/books_offline/"
@@ -19,7 +20,7 @@ PATH_FOLDER_BOOKS = "data/books_offline/"
 
 PATH_FILE_METADATA = "data/meta/books_meta_data.csv"
 PATH_FOLDER_INDEX_UNIQUE_WORD = "data/index/unique_word/"
-
+PATH_FILE_GLOBAL_INDEX_UNIQUE_WORD = "data/index/global/index_global_unique_word_to_id.csv"
 
 # --- FUNCTIONS ------------ #
 
@@ -67,7 +68,7 @@ class Extractor:
                         break
                 if DEBUG:
                     print(book_id+";"+title+";"+author+";"+date+"\n")
-                file_meta.write(book_id+";"+title+";"+author+";"+date+"\n")
+                file_meta.write(book_id+";"+title+";"+author+";"+date+";"+"\n")
                 book.close()
 
             file_meta.close()
@@ -85,10 +86,10 @@ class Extractor:
         ignored_word_set_reflexive = {"myself","yourself","himself","herself","itself","oneself","ourselves","yourselves","themselves"}
         ignored_word_set_reciprocal = {"each","other","another"}
         ignored_word_set_relative = {"that","which","who","whose","whom","where","when"}
-        ignored_word_set_demonstrative = {"this", "that", "these", "those"}
+        ignored_word_set_demonstrative = {"this", "that", "these", "those", "the"}
         ignored_word_set_interrogative = {"who", "what", "why", "where", "when", "whatever"}
         ignored_word_set_indefinite = {"anything", "anybody", "anyone", "something", "somebody", "someone", "nothing", "nobody", "none"}
-        ignored_word_set_other = {"gutenberg", "ebook"}
+        ignored_word_set_other = {"gutenberg", "ebook","are", "at", "and", "or", "a", "to"}
         ignored_word_set = set()
         ignored_word_set.update(ignored_word_set_pronouns)
         ignored_word_set.update(ignored_word_set_posessive)
@@ -161,7 +162,7 @@ class Extractor:
             
             # sort dico and write in index
             for word in sorted(dico.keys()):
-                index.write(word+";"+str(dico[word])+"\n")
+                index.write(word+";"+str(dico[word])+";"+"\n")
 
             book.close()
             index.close()            
@@ -170,53 +171,54 @@ class Extractor:
             return False
         return True
 
-
-# --- TOOLBOX FUNCTIONS ------ #
-
-class Toolbox:
-    def generate_name():
+    def global_index_unique_word():
         """
-        None -> String
-        return a random name among the list of given names
+        void -> void
+        IO: read from PATH_FOLDER_INDEX_UNIQUE_WORD
+        IO: write in PATH_FILE_GLOBAL_INDEX_UNIQUE_WORD
+        create a global index which contains all unique words and book_ids wich uses it
+        each line is : word;#;nb_occ;#;nb_occ;...  where # is a book_id and nb_occ is the nb_occurences of the word in the book
         """
-        name = ""
+        # open the global_index
         try:
-            file = open(NAMES, "r")
-            num_lines = sum(1 for _ in file)
-            file.close()
-            rn = random.randint(0, num_lines-1)
-            cpt = 0
-            file = open(NAMES, "r")
-            for line in file:
-                if (cpt == rn):
-                    name = line.split()
-                cpt += 1
-            file.close()
-        except IOError as e:
-            print(e)
-            print("Error in Toolbox.generate_name, file names.txt could be missing.")
-        return name[0]
+            global_index = open(PATH_FILE_GLOBAL_INDEX_UNIQUE_WORD, 'w')
     
-    def generate_company_id():
-        """
-        None -> String
-        return a random company_id
-        """
-        return "COID_"+str(random.randint(10,10000))
+            # make a global_dico of key : word & value : list of [(id,nb_occ)]
+            global_dico = {}
 
-    def reset_test_database(path):
-        """
-        String -> Boolean
-        """
-        try:
-            new_file = open(path, "w")
-            new_file.write("[]")
-            new_file.close()
-            return True
+            # open every index_unique_word
+            all_index = [file for file in glob.glob(PATH_FOLDER_INDEX_UNIQUE_WORD+"*.csv")]
+            all_index.sort()
+            for file_index in all_index:
+                index = open(file_index, 'r', encoding='ascii')
+                
+                # catch the book_id
+                book_id = file_index[41:-4]
+                if DEBUG:
+                    print("Reading : "+file_index)
+                    print("book_id = "+book_id)
+
+                # read the index and append the global_dico for every line
+                for line in index:
+                    word,nb_occ = line.split(';')
+                    if word in global_dico:
+                        global_dico[word].append((book_id,nb_occ))
+                    else:
+                        global_dico[word] = [(book_id,nb_occ)]
+                # close the index
+                index.close()
+            
+            if DEBUG:
+                print(global_dico)
+            # write global_dico into the global index
+
+
+
+            # close the global_index
+            global_index.close()
         except IOError as e:
             print(e)
-            return False
-        return False
+
 
 
 # --- MAIN ------------------- #
@@ -226,8 +228,10 @@ def main():
     # Extractor.extract_meta_data()
 
     # create an index of unique word for every books
-    Extractor.index_unique_word_for_all_books()
+    # Extractor.index_unique_word_for_all_books()
 
+    # create a global index for all unique words into a single file which contains ids and nb_occ of books who have this word
+    # Extractor.global_index_unique_word()
 
 # --- EXECUTION -------------- #
 main()
