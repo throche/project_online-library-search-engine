@@ -43,7 +43,7 @@ At the time of delivery we have implemented the following :
 + [Use cases : features](#use-cases-features)
 + [Exemple of usage](#exemple-of-usage)
 + [Program architecture](#program-architecture)
-+ [Scripts](#scripts)
++ [Offline work : scripts](#scripts)
 + [Data structure](#data-structure)
 + [Suggestions : graph algorithms](#suggestions-graph-algorithm)
 + [Credits](#credits)
@@ -133,7 +133,62 @@ Open a terminal in `project/src/client` then enter :
 3) see
 
 # Program architecture
+
+# Offline work : scripts
+
+Scripts are used to eased the workcharge on the server when it's online.
+
+## download and unzip books
+
+From `project/scripts` :
+
+Gutenberg provides books in different format, we chose to download books in ASCII format to generated our indexes, we use :
+
+`wget -w 2 -m -H "http://www.gutenberg.org/robot/harvest?filetypes[]=txt&langs[]=en"`
+
+to download books in english and `.txt` format and :
+
+`find . -name "*.zip" | while read filename; do unzip -o -d "./data/" "$filename"; done;`
+
+to unzip all the files into a single `./data` folder. Some books are US-ASCII instead of ASCII, we filter them out with :
+
+`xargs rm -f <<< $(find . -regex "./[0-9]+-[0-9].txt")`
+
+## extracting meta-data
+
+From `project/src/main_extractor.py` :
+
+we use `Extractor.extract_meta_data()` to extract meta-data from all books into single csv file containing all books's meta-data : book_id, title, author, release date
+
+it generates the file : `project/data/meta/books_meta_data.csv`
+
+Each line is : `book_id;title;author;release_date;` where book_id is sorted
+
+## generation of indexes
+
+### unique word index for every book
+
+From `project/src/main_extractor.py` :
+
+we use `Extractor.index_unique_word_for_all_books()` to generate one index per book in the foler `project/data/index/unique_word/`.
+
+each file name is : `index_unique_word_#.csv` where # is the book id
+
+each line is : `word;nb_occurences;` where word is sorted and is a unique word from the book which was not filtered out as junk
+
+### global index of unique words
+
+From `project/src/main_extractor.py` :
+
+we use `Extractor.global_index_unique_word()` to generate a single global index which contains all unique words in every book's index with the list of book_ids using said word along with number of occurences.
+
+it generates the file : `project/data/index/global/index_global_unique_word_to_id.csv`
+
+each line is : `word;book_id1;nb_occurences;book_id2;nb_occurences;...;` where word is sorted and unique, there can be one or more `book_id;nb_occurences;` following a word per line
+
 # Data structure
+
+
 
 # Suggestions : graph algorithms
 
@@ -149,25 +204,7 @@ image : ![schema](/schema/schema1.png)
 
 # scrap book:
 
-1) download 2000 (raw txt / ascii / english) books from gutenberg
 
-2) unzip the books into project/data/books_offline (750Mo)
-
-3) copy 50 books into project/data/books_online (<20Mo)
-
-4) use python script to extract meta-data from every books into single file `project/data/meta/books_meta_data.csv`
-
-each line is : `#;title;author;release date;` where # is the book_id sorted
-
-5) use python script to make index for every books into `project/data/index/unique_word/`
-
-file name is : `index_unique_word_#.csv` (where # is the book id)
-
-each line is : `a_word;nb_occurences;` (alpha ascended sort on first field)
-
-6) use python script to make a global index for all unique words into a single file `project/data/index/global/index_global_unique_word_to_id.csv`
-
-each line is : `a_word;#;nb_occurences;#;nb_occurences;...;` (alpha ascended sort on first field, where # is a book id)
 
 7) fonction to search a word in the indexes (@param : string, @return : (id, scores)[])
 
