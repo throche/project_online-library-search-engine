@@ -1,3 +1,6 @@
+# client node js files
+project/src/client/node_modules
+
 # offline books is too bulky
 project/data/books_offline/*.txt
 

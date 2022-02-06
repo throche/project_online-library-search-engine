@@ -6,11 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # --- GLOBAL VARIABLES ----- #
 
-DEBUG=True
+DEBUG=False
 # PATH_FOLDER_BOOKS = "data/books_offline/"
 # PATH_FOLDER_BOOKS = "data/books_online/"
 PATH_FILE_METADATA = "data/meta/books_meta_data.csv"
-PATH_FILE_GLOBAL_INDEX = "data/index/global/index_global_unique_word_to_id_test.csv"
+# PATH_FILE_GLOBAL_INDEX = "data/index/global/index_global_unique_word_to_id_test.csv"
+PATH_FILE_GLOBAL_INDEX = "data/index/global/index_global_unique_word_to_id.csv"
 GLOBAL_INDEX = dict()
 META_DATA = dict()
 
@@ -134,9 +135,10 @@ def get_all_matches(lists):
         print(result)
     list_of_matches = []
     for elem in result.values():
-        print(elem)
-        print(int(elem[2]))
-        print(len(lists))
+        if DEBUG:
+            print(elem)
+            print(int(elem[2]))
+            print(len(lists))
         if int(elem[2]) == len(lists):
             list_of_matches.append((elem[0], elem[1]))
     if DEBUG:

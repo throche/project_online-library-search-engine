@@ -28,7 +28,13 @@ pnds.5791@gmail.com
 
 # Project summary
 
+This project is about creating a website with a search engine capable of researching through thousands of books in a near instant response time. The user is also given suggestions of other books based on certain algorithms studied during the semester.
 
+At the time of delivery we have implemented the following :
++ a front-end with Angular Framework
++ a server made in Python3 with fastapi package
++ multiple scripts in Bash and Python3
++ multiple features explained with more details in #
 
 # Table of content
 
