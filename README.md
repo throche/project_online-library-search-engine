@@ -34,21 +34,26 @@ At the time of delivery we have implemented the following :
 + a front-end with Angular Framework
 + a server made in Python3 with fastapi package
 + multiple scripts in Bash and Python3
-+ multiple features explained with more details in #
++ multiple features explained with [more details here](#use-cases-features)
 
 # Table of content
 
-+ Installation
-+ Use cases (features)
-+ Exemple of usage
-+ Program architecture
-+ Data structure
-+ Credits and references
++ [Installation](#installation)
++ [How to start](#how-to-start)
++ [Use cases : features](#use-cases-features)
++ [Exemple of usage](#exemple-of-usage)
++ [Program architecture](#program-architecture)
++ [Scripts](#scripts)
++ [Data structure](#data-structure)
++ [Suggestions : graph algorithms](#suggestions-graph-algorithm)
++ [Credits](#credits)
 
 
 # Installation
 
 ## Back-end API in python (using fastapi package)
+
+Open a terminal in `project/src/server` then enter :
 
 `pip install fastapi`
 
@@ -58,45 +63,83 @@ At the time of delivery we have implemented the following :
 
 ## Front-end Client in Angular Typescript
 
-sudo apt install nodejs
+Open a terminal in `project/src/client` then enter :
 
-sudo apt install npm
+`sudo apt install nodejs`
 
-sudo npm install -g n
+`sudo apt install npm`
 
-sudo n stable  #update node to latest version
+`sudo npm install -g n`
 
-hash -r
+`sudo n stable`  (update node to latest version)
 
-sudo npm install -g @angular/cli
+`hash -r`
 
+`sudo npm install -g @angular/cli`
 
-# Use cases (features)
-# Exemple of usage
+# How to start
 
-## Back end API in python (using fastapi package)
+## (Only run once) : pre-indexing data is the offline work
 
-from the project/src/server folder
+Open a terminal in `project` then enter :
 
-`uvicorn main:app --reload`
+`python -m src.main_extractor` this generates indexes
 
-or, from the project folder
+## Server
+
+Open a terminal in `project` then enter :
 
 `uvicorn src.server.main:app --reload`
 
-## Front-end Client in Angular Typescript
+## Client
 
-from the project/src/client folder
+Open a terminal in `project/src/client` then enter :
 
-npm install
+`npm install`
 
-npm run start
+`npm run start` then open a brower and go to `http://localhost:4200`
 
-open a browser at http://localhost:4200
+**You're good to go!**
+
+
+# Use cases : features
+
+## client side
+
++ the user can use the website to search for a specific book using keywords (seperated by whitespace)
++ the research's results give the books's basic info and link to the Guntenberg Project book page
++ the research's results are ranked
++ the results from the search function is very fast (<1s)
++ the user is given suggestions of books based on its last research (graph algorithms used)
+
+## server side (online)
+
++ we use a score system to rank our search results and suggestions
++ the search results and suggestions are obtained very quickly (<1s)
+
+## back end (offline)
+
++ we use scripts to crawl and download books from the Gunteberg Project (respectfully)
++ we have 2000 books in english language registered, we can add more easily
++ we run scripts to index all books and filter out lots of junk
++ we run scripts to prerun suggestions, using the Jaccard graph algorithm (proximity of lexical fields)
+
+# Exemple of usage
+
+1) follow the [How to start](#how-to-start) procedure
+
+2) search for `energy nuclear`
+
+3) see
 
 # Program architecture
 # Data structure
-# Credits and references
+
+# Suggestions : graph algorithms
+
+
+# Credits
+
 
 
 code : ```...```
