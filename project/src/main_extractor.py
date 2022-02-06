@@ -1,14 +1,11 @@
 # --- NOTE FOR DEVS ------- #
 """
-
+comment DEBUG=True/False to see logs
+scroll down to bottom in main to comment scripts to use or not
 """
 
 import io
 import glob
-#import json
-#from datetime import datetime
-#import random
-
 
 # --- GLOBAL VARIABLES ----- #
 
@@ -21,6 +18,7 @@ PATH_FOLDER_BOOKS = "data/books_offline/"
 PATH_FILE_METADATA = "data/meta/books_meta_data.csv"
 PATH_FOLDER_INDEX_UNIQUE_WORD = "data/index/unique_word/"
 PATH_FILE_GLOBAL_INDEX_UNIQUE_WORD = "data/index/global/index_global_unique_word_to_id.csv"
+
 
 # --- FUNCTIONS ------------ #
 
@@ -230,13 +228,14 @@ class Extractor:
 def main():
     
     # extract meta-data from all books into single file csv file
-    # Extractor.extract_meta_data()
+    Extractor.extract_meta_data()
 
     # create an index of unique word for every books
     Extractor.index_unique_word_for_all_books()
 
     # create a global index for all unique words into a single file which contains ids and nb_occ of books who have this word
     Extractor.global_index_unique_word()
+
 
 # --- EXECUTION -------------- #
 main()

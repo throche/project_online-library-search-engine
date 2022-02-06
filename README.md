@@ -43,7 +43,7 @@ At the time of delivery we have implemented the following :
 + [Use cases : features](#use-cases-features)
 + [Exemple of usage](#exemple-of-usage)
 + [Program architecture](#program-architecture)
-+ [Offline work : scripts](#scripts)
++ [Offline work & scripts](#offline-work-&-scripts)
 + [Data structure](#data-structure)
 + [Suggestions : graph algorithms](#suggestions-graph-algorithm)
 + [Credits](#credits)
@@ -83,7 +83,7 @@ Open a terminal in `project/src/client` then enter :
 
 Open a terminal in `project` then enter :
 
-`python -m src.main_extractor` this generates indexes
+`python -m src.main_extractor` this generates indexes, you can open the file to toggle in/out certain function, see more in the [offline work : scripts](#offline-work-&-scripts)
 
 ## Server
 
@@ -130,13 +130,30 @@ Open a terminal in `project/src/client` then enter :
 
 2) search for `energy nuclear`
 
-3) see
+3) search for `happiness children`
 
 # Program architecture
 
-# Offline work : scripts
+## client side
 
-Scripts are used to eased the workcharge on the server when it's online.
+There is no data on the client side. When performing a search request, the client will receive small json files containing : book_id, title, author, release date, score.
+
+The score is used to rank the results on screen.
+
+The book_id is used to generate a link to the proper book section in the Guntenberg Project.
+
+## server side (online)
+
+When the server is booted, it will load three files in Python dictionnarys then it won't read any other files. The loaded files are :
+
++ `books_meta_data.csv` which contains meta-data for all books
++ `index_global_unique_word_to_id.csv` which contains all unique words and book_ids which have them
++ `books_distance.csv` which contains suggestions for every books
+
+
+# Offline work & scripts
+
+Scripts are used to ease the work load on the server when it's online.
 
 ## download and unzip books
 
@@ -154,7 +171,15 @@ to unzip all the files into a single `./data` folder. Some books are US-ASCII in
 
 `xargs rm -f <<< $(find . -regex "./[0-9]+-[0-9].txt")`
 
-## extracting meta-data
+## extracting meta-data and generating indexes
+
+Functions are defined in `project/src/main_extractor.py` there are three functions, which can be commented out in the main. By default they are run one after the other when performing the following :
+
+Open a terminal in `project` then enter :
+
+`python -m src.main_extractor` 
+
+### extracting meta-data
 
 From `project/src/main_extractor.py` :
 
@@ -163,8 +188,6 @@ we use `Extractor.extract_meta_data()` to extract meta-data from all books into 
 it generates the file : `project/data/meta/books_meta_data.csv`
 
 Each line is : `book_id;title;author;release_date;` where book_id is sorted
-
-## generation of indexes
 
 ### unique word index for every book
 
@@ -203,7 +226,6 @@ image : ![schema](/schema/schema1.png)
 
 
 # scrap book:
-
 
 
 7) fonction to search a word in the indexes (@param : string, @return : (id, scores)[])
