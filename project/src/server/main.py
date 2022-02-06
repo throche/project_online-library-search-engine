@@ -49,10 +49,6 @@ def read_item(q: str):
     res_with_metadata = get_results_metadata(res)
     
     return res_with_metadata
-    #return {"res":[{"id": "10001", "Title" : "Apocolocyntosis", "Author": "Lucius Seneca", "Release_Date":"November 10, 2003", "score": "40"},
-    #	           {"id": "10010", "Title" : "The Eulogies of Howard", "Author": "William Hayley", "Release_Date":"November 7, 2003", "score": "15"},
-    #	           {"id": "10024", "Title" : "Beneath the Banner", "Author": "F. J. Cross", "Release_Date":"November 9, 2003", "score": "190"}]}
-
 
 @app.get("/suggest")
 def read_item(q: str):
@@ -63,7 +59,7 @@ def read_item(q: str):
     list_neighbours = DISTANCE[q]
     suggestions = []
     for i in range (NB_SUGGESTIONS):
-        suggestions.append(random.choice(list_neighbours))
+        suggestions.append(list_neighbours[i])
     
     suggestions_with_metadata = get_neighbours_metadata(suggestions)    
     return suggestions_with_metadata
