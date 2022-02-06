@@ -200,7 +200,7 @@ class Extractor:
 
                 # read the index and append the global_dico for every line
                 for line in index:
-                    word,nb_occ = line.split(';')
+                    word,nb_occ,z = line.split(';')
                     if word in global_dico:
                         global_dico[word].append((book_id,nb_occ))
                     else:
@@ -208,11 +208,14 @@ class Extractor:
                 # close the index
                 index.close()
             
-            if DEBUG:
-                print(global_dico)
             # write global_dico into the global index
-
-
+            for word in sorted(global_dico.keys()):
+                liste = ""
+                for (book_id,nb_occ) in global_dico[word]:
+                    liste = liste + str(book_id) + ";" + str(nb_occ)+";"
+                    # if DEBUG:
+                    #     print(word+";"+liste+"\n")
+                global_index.write(word+";"+liste+"\n")
 
             # close the global_index
             global_index.close()
