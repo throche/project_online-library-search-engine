@@ -89,7 +89,7 @@ class Extractor:
         ignored_word_set_demonstrative = {"this", "that", "these", "those", "the"}
         ignored_word_set_interrogative = {"who", "what", "why", "where", "when", "whatever"}
         ignored_word_set_indefinite = {"anything", "anybody", "anyone", "something", "somebody", "someone", "nothing", "nobody", "none"}
-        ignored_word_set_other = {"gutenberg", "ebook","are", "at", "and", "or", "a", "to"}
+        ignored_word_set_other = {"gutenberg", "ebook","are", "at", "and", "or", "a", "to", "an", "as", "any", "away", "be", "before", "after","but","by","c","b","compilation","computer","computers","copyright", "if"}
         ignored_word_set = set()
         ignored_word_set.update(ignored_word_set_pronouns)
         ignored_word_set.update(ignored_word_set_posessive)
@@ -142,8 +142,10 @@ class Extractor:
             for line in book:
                 for word in line.split():
                     word = word.replace('.','').replace(',','').replace(';','').replace('[','').replace(']','')
-                    word = word.replace('?','').replace('!','').replace(':','').replace("'",'').replace("_",'')
-                    word = word.replace('"','').replace('(','').replace(')','').replace("$",'').replace("*",'')
+                    word = word.replace('?','').replace('!','').replace(':','').replace("'",'').replace('_','')
+                    word = word.replace('"','').replace('(','').replace(')','').replace('$','').replace('*','')
+                    word = word.replace('{','').replace('}','').replace('|','').replace('#','').replace('~','')
+                    word = word.replace('+','').replace('=','').replace('&','').replace('%','')
                     if not word.isnumeric():
                         word = word.lower()
                         if word in dico:
@@ -231,10 +233,10 @@ def main():
     # Extractor.extract_meta_data()
 
     # create an index of unique word for every books
-    # Extractor.index_unique_word_for_all_books()
+    Extractor.index_unique_word_for_all_books()
 
     # create a global index for all unique words into a single file which contains ids and nb_occ of books who have this word
-    # Extractor.global_index_unique_word()
+    Extractor.global_index_unique_word()
 
 # --- EXECUTION -------------- #
 main()

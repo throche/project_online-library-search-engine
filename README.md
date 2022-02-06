@@ -108,17 +108,17 @@ image : ![schema](/schema/schema1.png)
 
 4) use python script to extract meta-data from every books into single file `project/data/meta/books_meta_data.csv`
 
-each line is : `#;title;author;release date` where # is the book_id sorted
+each line is : `#;title;author;release date;` where # is the book_id sorted
 
 5) use python script to make index for every books into `project/data/index/unique_word/`
 
 file name is : `index_unique_word_#.csv` (where # is the book id)
 
-each line is : `a_word;nb_occurences` (alpha ascended sort on first field)
+each line is : `a_word;nb_occurences;` (alpha ascended sort on first field)
 
 6) use python script to make a global index for all unique words into a single file `project/data/index/global/index_global_unique_word_to_id.csv`
 
-each line is : `a_word;#+nb_occurences;#+nb_occurences;...` (alpha ascended sort on first field, where # is a book id)
+each line is : `a_word;#;nb_occurences;#;nb_occurences;...;` (alpha ascended sort on first field, where # is a book id)
 
 7) fonction to search a word in the indexes (@param : string, @return : (id, scores)[])
 
