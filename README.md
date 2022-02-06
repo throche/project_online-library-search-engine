@@ -289,3 +289,6 @@ Book database https://www.gutenberg.org/
 Jaccard distance https://www-apr.lip6.fr/~buixuan/daar2021
 
 TF-IDF ranking method https://kmwllc.com/index.php/2020/03/20/understanding-tf-idf-and-bm-25/
+
+
+[Back to table of content](#table-of-content)
