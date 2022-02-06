@@ -108,7 +108,7 @@ image : ![schema](/schema/schema1.png)
 
 4) use python script to extract meta-data from every books into single file `project/data/meta/books_meta_data.csv`
 
-each line is : `id;title;author;...`
+each line is : `#;title;author;release date` where # is the book_id sorted
 
 5) use python script to make index for every books into `project/data/index/unique_word/`
 
