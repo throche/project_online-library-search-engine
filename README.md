@@ -34,19 +34,19 @@ At the time of delivery we have implemented the following :
 + a front-end with Angular Framework
 + a server made in Python3 with fastapi package
 + multiple scripts in Bash and Python3
-+ multiple features explained with [more details here](#use-cases-features)
++ multiple features explained with [more details here](#use-cases--features)
 
 
 # Table of content
 
 + [Installation](#installation)
 + [How to start](#how-to-start)
-+ [Use cases : features](#use-cases-features)
++ [Use cases : features](#use-cases--features)
 + [Exemple of usage](#exemple-of-usage)
 + [Program architecture](#program-architecture)
-+ [Offline work & scripts](#offline-work-&-scripts)
++ [Offline work & scripts](#offline-work--scripts)
 + [Data structure](#data-structure)
-+ [Suggestions : graph algorithms](#suggestions-graph-algorithms)
++ [Suggestions : graph algorithms](#suggestions--graph-algorithms)
 + [Credits](#credits)
 
 
@@ -85,7 +85,7 @@ Open a terminal in `project/src/client` then enter :
 
 Open a terminal in `project` then enter :
 
-`python -m src.main_extractor` this generates indexes, you can open the file to toggle in/out certain function, see more in the [offline work : scripts](#offline-work-&-scripts)
+`python -m src.main_extractor` this generates indexes, you can open the file to toggle in/out certain function, see more in the [offline work : scripts](#offline-work--scripts)
 
 ## Server
 
