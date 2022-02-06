@@ -36,6 +36,7 @@ At the time of delivery we have implemented the following :
 + multiple scripts in Bash and Python3
 + multiple features explained with [more details here](#use-cases-features)
 
+
 # Table of content
 
 + [Installation](#installation)
@@ -45,7 +46,7 @@ At the time of delivery we have implemented the following :
 + [Program architecture](#program-architecture)
 + [Offline work & scripts](#offline-work-&-scripts)
 + [Data structure](#data-structure)
-+ [Suggestions : graph algorithms](#suggestions-graph-algorithm)
++ [Suggestions : graph algorithms](#suggestions-graph-algorithms)
 + [Credits](#credits)
 
 
@@ -76,6 +77,7 @@ Open a terminal in `project/src/client` then enter :
 `hash -r`
 
 `sudo npm install -g @angular/cli`
+
 
 # How to start
 
@@ -124,15 +126,25 @@ Open a terminal in `project/src/client` then enter :
 + we run scripts to index all books and filter out lots of junk
 + we run scripts to prerun suggestions, using the Jaccard graph algorithm (proximity of lexical fields)
 
+
 # Exemple of usage
 
-1) follow the [How to start](#how-to-start) procedure
+1) follow the [How to start](#how-to-start) procedure to get the server & client running. You must have generated the indexes and the suggestions also.
 
-2) search for `energy nuclear`
+2) search for `mozart` it shows a large number of results
 
-3) search for `happiness children`
+3) search for `mozart piano jazz` it shows only one result, because the search function look for the intersection of all words in books.
+
+4) search for `averyrandomword` and it won't give any results.
+
+Results are ranked by a score : the sum of occurences the words are found in the book.
+
+Suggestions are also ranked, by a score of proximity with the book's lexical field.
+
 
 # Program architecture
+
+![diagram of program architecture](/support_de_rendu/img_rapport/program_architecture.drawio.png)
 
 ## client side
 
@@ -161,6 +173,7 @@ They access the 3 indexes made during the offline pre-treatment operations.
 The indexes are loaded into dictionnaries, implemented using hashmaps.
 
 When several words are searched, the query string is broken into single words and only books containing all words will be returned as results.
+
 
 # Offline work & scripts
 
@@ -268,11 +281,11 @@ When comparing 2 book indexes, if a word is present in both books, the closeness
 
 We decided for each book to keep the 50 highest 'closeness scores' in the file books_distance.csv
 
+
 # Credits
 
+Book database https://www.gutenberg.org/
 
+Jaccard distance https://www-apr.lip6.fr/~buixuan/daar2021
 
-code : ```...```
-image : ![schema](/schema/schema1.png)
-
-
+TF-IDF ranking method https://kmwllc.com/index.php/2020/03/20/understanding-tf-idf-and-bm-25/

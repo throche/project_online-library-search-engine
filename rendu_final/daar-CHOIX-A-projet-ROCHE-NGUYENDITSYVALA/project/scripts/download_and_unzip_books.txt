@@ -1,0 +1,12 @@
+# download random books from gutenberg project
+# books are in .txt, ASCII and english
+
+wget -w 2 -m -H "http://www.gutenberg.org/robot/harvest?filetypes[]=txt&langs[]=en"
+
+
+# Extract all books into ./data/
+find . -name "*.zip" | while read filename; do unzip -o -d "./data/" "$filename"; done;
+
+
+# delete books which are not ascii names are <#-#.txt> instead of <#.txt>
+xargs rm -f <<< $(find . -regex "./[0-9]+-[0-9].txt")
