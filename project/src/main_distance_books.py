@@ -1,25 +1,16 @@
-# --- NOTE FOR DEVS ------- #
-"""
-
-"""
-
 import glob
-#import json
-#from datetime import datetime
-#import random
-
 
 # --- GLOBAL VARIABLES ----- #
 
-DEBUG=True
-SIMILARITY_THRESHOLD = 500
+DEBUG=False
+SIMILARITY_THRESHOLD = 100
 
 PATH_FOLDER_INDEX_UNIQUE_WORD = "data/index/unique_word/"
 PATH_FILE_DISTANCE = "data/distance/books_distance.csv"
 PATH_FILE_WORDS_SCORE = "data/distance/words_scores.csv"
 DISTANCE_INDEX = dict()
 DICT_ALL_WORDS = dict()
-
+NB_MAX_NEIGHBOURS = 50
 
 # --- FUNCTIONS ------------ #
 
@@ -56,14 +47,15 @@ def compare_unique_indexes(idx1, idx2):
 
     similarity = cpt_unique_words_similar/((size1+size2)/2)
     if similarity > SIMILARITY_THRESHOLD:
-        print("total id " + id1 +  " : " + str(size1) + ", total id " + id2 + " : " + str(size2) + ", similar : " + str(cpt_unique_words_similar))    
-        print("similarity " + str(similarity))
+        if DEBUG:
+            print("total id " + id1 +  " : " + str(size1) + ", total id " + id2 + " : " + str(size2) + ", similar : " + str(cpt_unique_words_similar))    
+            print("similarity " + str(similarity))
         if DISTANCE_INDEX.get(id1) == None:
             DISTANCE_INDEX[id1] = []     
-        DISTANCE_INDEX[id1].append(id2)
+        DISTANCE_INDEX[id1].append((id2,similarity))
         if DISTANCE_INDEX.get(id2) == None:
             DISTANCE_INDEX[id2] = []     
-        DISTANCE_INDEX[id2].append(id1)
+        DISTANCE_INDEX[id2].append((id1, similarity))
         
     return
 
@@ -83,14 +75,19 @@ def create_distance_index():
                 #print("2 : " + file_index_name_2)
                 #print("1 : " + file_index_name_1[41:-4])
                 #print("2 : " + file_index_name_2[41:-4])       
-
                 compare_unique_indexes(file_index_name_1, file_index_name_2)
-        
+               
+                
         file_distance = open(PATH_FILE_DISTANCE, "w")
         for elem in DISTANCE_INDEX.items():  
             file_distance.write(elem[0]+";")
-            for neighbour in elem[1]:
-                file_distance.write(neighbour+";")
+            sorted_neighbours = sorted(elem[1], key=lambda x: x[1], reverse=True)
+            nb_neighbours = 0
+            for neighbour in sorted_neighbours:
+                file_distance.write(neighbour[0]+";")
+                nb_neighbours += 1
+                if nb_neighbours > NB_MAX_NEIGHBOURS:
+                    break;
             file_distance.write("\n")
                 
                     
@@ -121,16 +118,20 @@ def create_word_scores():
                     DICT_ALL_WORDS[tab[0]] = 1
                 else:
                     DICT_ALL_WORDS[tab[0]] += 1
-        print(DICT_ALL_WORDS)
+        if DEBUG:
+            print(DICT_ALL_WORDS)
         file_scores = open(PATH_FILE_WORDS_SCORE, "w")
         for elem in DICT_ALL_WORDS.items():
             score = len(files_of_unique_indexes)/elem[1]
-            print(str(elem[0]) + " : " + str(score))
+            if DEBUG:
+                print(str(elem[0]) + " : " + str(score))
             file_scores.write(elem[0] + ";" + str(score) + ";\n")
         
 
     except IOError as e:
         print(e)
-    
+
+# --- MAIN ----- #
+
 create_word_scores()
 create_distance_index()
